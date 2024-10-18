@@ -1,0 +1,76 @@
+body {
+    background-color: #f4f4f9;
+    font-family: 'Arial', sans-serif;
+}
+
+h1 {
+    color: #007BFF;
+    font-weight: bold;
+}
+
+.card {
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.table {
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: white;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+}
+
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    border-radius: 5px;
+}
+
+.btn-primary, .btn-success, .btn-warning, .btn-info {
+    border-radius: 5px;
+}
+
+input.form-control, select.form-select {
+    border-radius: 5px;
+}
+
+.dark-mode {
+    background-color: #1e1e1e;
+    color: white;
+}
+
+.dark-mode .card {
+    background-color: #333;
+}
+
+.dark-mode .table {
+    background-color: #333;
+    color: white;
+}
+
+.dark-mode .table-dark th {
+    background-color: #555;
+}
+
+table {
+    margin-top: 20px;
+}
+
+thead th {
+    background-color: #007BFF;
+    color: white;
+}
+
+tbody tr:hover {
+    background-color: #d1ecf1;
+}
+
+td img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}

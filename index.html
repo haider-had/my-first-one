@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام الحضور الاحترافي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="text-center">
+            <h1>نظام الحضور الاحترافي للطلاب</h1>
+            <button class="btn btn-secondary" onclick="toggleDarkMode()">تفعيل الوضع الليلي</button>
+        </div>
+
+        <!-- لوحة تحكم تسجيل الدخول -->
+        <div class="card mt-5 shadow-lg" id="loginCard">
+            <div class="card-body">
+                <h3>تسجيل الدخول</h3>
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">اسم المستخدم</label>
+                        <input type="text" id="username" class="form-control" placeholder="أدخل اسم المستخدم" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
+                </form>
+                <div id="loginError" class="alert alert-danger mt-3 d-none"></div>
+            </div>
+        </div>
+
+        <!-- قسم إضافة الحضور -->
+        <div id="addAttendanceSection" class="mt-5 d-none">
+            <h3 class="text-center">إضافة حضور</h3>
+            <form id="addAttendanceForm" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="studentName" class="form-label">اسم الطالب</label>
+                    <input type="text" id="studentName" class="form-control" placeholder="أدخل اسم الطالب" required>
+                </div>
+                <div class="mb-3">
+                    <label for="studentImage" class="form-label">صورة الطالب</label>
+                    <input type="file" id="studentImage" class="form-control" accept="image/*">
+                </div>
+                <div class="mb-3">
+                    <label for="attendanceDay" class="form-label">اختر اليوم</label>
+                    <select id="attendanceDay" class="form-select" required>
+                        <option value="">اختر اليوم</option>
+                        <option value="السبت">السبت</option>
+                        <option value="الأحد">الأحد</option>
+                        <option value="الإثنين">الإثنين</option>
+                        <option value="الثلاثاء">الثلاثاء</option>
+                        <option value="الأربعاء">الأربعاء</option>
+                        <option value="الخميس">الخميس</option>
+                        <option value="الجمعة">الجمعة</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="attendanceStatus" class="form-label">الحالة</label>
+                    <select id="attendanceStatus" class="form-select" required>
+                        <option value="">اختر الحالة</option>
+                        <option value="حاضر">حاضر</option>
+                        <option value="غائب">غائب</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success" id="addButton"><i class="fas fa-plus"></i> إضافة حضور</button>
+                <button type="button" class="btn btn-info" onclick="printAttendance()"><i class="fas fa-print"></i> طباعة البيانات</button>
+                <button type="button" class="btn btn-primary" onclick="showReport()"><i class="fas fa-file-alt"></i> عرض التقارير</button>
+            </form>
+            <div id="addAttendanceError" class="alert alert-danger mt-3 d-none"></div>
+        </div>
+
+        <!-- قسم البحث عن الحضور -->
+        <div id="searchAttendanceSection" class="mt-5 d-none">
+            <h3 class="text-center">البحث عن الحضور</h3>
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="ابحث عن اسم الطالب..." onkeyup="searchAttendance()">
+            </div>
+        </div>
+
+        <!-- جدول بيانات الحضور -->
+        <div id="attendanceSection" class="mt-5 d-none">
+            <h3 class="text-center">قائمة الحضور</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>صورة الطالب</th>
+                        <th>اسم الطالب</th>
+                        <th>الحالة</th>
+                        <th>اليوم</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- لوحة الإحصائيات -->
+        <div id="statisticsSection" class="mt-5 d-none">
+            <h3 class="text-center">إحصائيات الحضور</h3>
+            <canvas id="attendanceChart" height="100"></canvas>
+        </div>
+
+        <!-- نافذة التقرير -->
+        <div id="reportModal" class="modal fade" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reportModalLabel">تقارير الحضور</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="reportContent">
+                        <p>لا توجد بيانات بعد.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
